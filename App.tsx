@@ -108,12 +108,14 @@ export default function App() {
     setLoading(true);
     setError(null);
     setViewingUser(user);
+    setCursorMap(undefined);
     try {
-      const timeline = await getUserTimeline(user.did);
-      setPosts(timeline);
+      const result = await getMergedTimeline(user.handle);
+      setPosts(result.posts);
+      setCursorMap(result.cursorMap);
     } catch (e: any) {
       console.error(e);
-      setError('ユーザーの投稿取得に失敗しました。');
+      setError('ユーザーのFollowingタイムライン取得に失敗しました。');
     } finally {
       setLoading(false);
     }
@@ -162,6 +164,13 @@ export default function App() {
 
   const renderPost = ({ item }: { item: Post }) => (
     <View style={styles.postContainer}>
+      {item.repostedBy && (
+        <View style={styles.repostHeader}>
+          <Text style={styles.repostText}>
+            {item.repostedBy.displayName || item.repostedBy.handle} がリポストしました
+          </Text>
+        </View>
+      )}
       <View style={styles.postHeader}>
         <TouchableOpacity onPress={() => fetchUserTimeline({ handle: item.author.handle, did: item.author.did })}>
           {item.author.avatar ? (
@@ -186,7 +195,7 @@ export default function App() {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>
-            {viewingUser ? `@${viewingUser.handle} の投稿` : 'Look at the world you see'}
+            {viewingUser ? `@${viewingUser.handle} が見ている世界` : 'Look at the world you see'}
           </Text>
         <View style={styles.inputContainer}>
           <TextInput
@@ -304,6 +313,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+  },
+  repostHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingBottom: 4,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#eee',
+  },
+  repostText: {
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '600',
   },
   postHeader: {
     flexDirection: 'row',
