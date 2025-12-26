@@ -2,12 +2,13 @@
   "name": "my-app",
   "version": "1.0.0",
   "main": "index.ts",
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
-  },
+ "scripts": {
+  "start": "expo start",
+  "android": "expo start --android",
+  "ios": "expo start --ios",
+  "web": "expo start --web",
+  "build": "expo export:web" 
+},
   "dependencies": {
     "@atproto/api": "^0.18.8",
     "@expo/metro-runtime": "~6.1.2",
