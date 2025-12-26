@@ -63,7 +63,9 @@ export const getMergedTimeline = async (handle: string, cursorMap?: Map<string, 
   const did = await resolveHandle(handle);
   // Get follows (limit to 30 for performance and rate limiting)
   const res = await agent.app.bsky.graph.getFollows({ actor: did, limit: 30 });
-  const follows = res.data.follows;
+  const follows = res.data.follows.filter(profile =>
+	profile.labels == null || !profile.labels.some(label => label.val === "!no-unauthenticated")
+  );
   
   const newCursorMap = new Map<string, string>();
   const batchSize = 5;
