@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getMergedTimeline, Post } from '../src/services/bsky';
+import { getTranslations, detectLanguage, Language } from '../src/i18n';
 
 const { width } = Dimensions.get('window');
 
@@ -71,6 +72,9 @@ export default function TimelinePage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [cursorMap, setCursorMap] = useState<Map<string, string> | undefined>(undefined);
   const [viewingUser, setViewingUser] = useState<{ handle: string; did: string } | null>(null);
+  const [language, setLanguage] = useState<Language>(detectLanguage());
+
+  const t = getTranslations(language);
 
   useEffect(() => {
     if (id) {
@@ -105,7 +109,7 @@ export default function TimelinePage() {
       setCursorMap(result.cursorMap);
     } catch (e: any) {
       console.error(e);
-      setError('タイムラインの取得に失敗しました。IDを確認してください。');
+      setError(t.errorFetchTimeline);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -164,7 +168,7 @@ export default function TimelinePage() {
       {item.repostedBy && (
         <View style={styles.repostHeader}>
           <Text style={styles.repostText}>
-            {item.repostedBy.displayName || item.repostedBy.handle} がリポストしました
+            {item.repostedBy.displayName || item.repostedBy.handle} {t.repostedBy}
           </Text>
         </View>
       )}
@@ -194,12 +198,19 @@ export default function TimelinePage() {
           onPress={() => router.canGoBack() ? router.back() : router.replace('/')} 
           style={styles.backButton}
         >
-          <Text style={styles.backButtonText}>←</Text>
+          <Text style={styles.backButtonText}>{t.backButton}</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1}>
-          @{id} が見ている世界
+          @{id}{language === 'en' ? t.viewingWorld : ' ' + t.viewingWorld}
         </Text>
-        <View style={{ width: 40 }} />
+        <TouchableOpacity 
+          style={styles.languageToggle}
+          onPress={() => setLanguage(prev => prev === 'ja' ? 'en' : 'ja')}
+        >
+          <Text style={styles.languageToggleText}>
+            {language === 'ja' ? 'EN' : '日本語'}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -207,7 +218,7 @@ export default function TimelinePage() {
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0085ff" />
-          <Text style={styles.loadingText}>フォロー一覧から投稿を集計中...</Text>
+          <Text style={styles.loadingText}>{t.loadingFollows}</Text>
         </View>
       ) : (
         <FlatList
@@ -232,7 +243,7 @@ export default function TimelinePage() {
           }
           ListEmptyComponent={
             !loading && posts.length === 0 ? (
-              <Text style={styles.emptyText}>投稿が見つかりませんでした</Text>
+              <Text style={styles.emptyText}>{t.emptyPosts}</Text>
             ) : null
           }
         />
@@ -264,6 +275,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#0085ff',
     fontWeight: 'bold',
+  },
+  languageToggle: {
+    padding: 8,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    width: 60,
+    alignItems: 'center',
+  },
+  languageToggleText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0085ff',
   },
   title: {
     flex: 1,
