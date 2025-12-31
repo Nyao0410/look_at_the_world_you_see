@@ -57,7 +57,10 @@ export const getTranslations = (language: Language): Translations => {
 };
 
 export const detectLanguage = (): Language => {
-  // Default to Japanese for now
-  // In a real implementation, we could use platform language detection
+  // Default to Japanese
+  // TODO: Enhance with platform-specific language detection using expo-localization
+  // e.g., import * as Localization from 'expo-localization';
+  // const locale = Localization.locale; // Returns 'ja-JP', 'en-US', etc.
+  // return locale.startsWith('ja') ? 'ja' : 'en';
   return 'ja';
 };

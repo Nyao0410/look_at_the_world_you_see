@@ -25,7 +25,7 @@ export default function Home() {
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [language, setLanguage] = useState<Language>(detectLanguage());
   const router = useRouter();
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   const t = getTranslations(language);
 
