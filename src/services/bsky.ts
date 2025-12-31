@@ -43,6 +43,32 @@ export interface Post {
   };
 }
 
+export interface ActorSuggestion {
+  did: string;
+  handle: string;
+  displayName?: string;
+  avatar?: string;
+  description?: string;
+}
+
+export const searchActors = async (query: string, limit = 5): Promise<ActorSuggestion[]> => {
+  if (!query || query.trim().length === 0) return [];
+  
+  try {
+    const res = await agent.searchActors({ q: query, limit });
+    return res.data.actors.map(actor => ({
+      did: actor.did,
+      handle: actor.handle,
+      displayName: actor.displayName,
+      avatar: actor.avatar,
+      description: actor.description,
+    }));
+  } catch (e) {
+    console.error('Error searching actors:', e);
+    return [];
+  }
+};
+
 export const resolveHandle = async (handle: string) => {
   if (handle.startsWith('did:')) return handle;
   const res = await agent.resolveHandle({ handle });
