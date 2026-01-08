@@ -43,6 +43,32 @@ export interface Post {
   };
 }
 
+export interface ActorSuggestion {
+  did: string;
+  handle: string;
+  displayName?: string;
+  avatar?: string;
+  description?: string;
+}
+
+export const searchActors = async (query: string, limit = 5): Promise<ActorSuggestion[]> => {
+  if (!query || query.trim().length === 0) return [];
+  
+  try {
+    const res = await agent.searchActors({ q: query, limit });
+    return res.data.actors.map(actor => ({
+      did: actor.did,
+      handle: actor.handle,
+      displayName: actor.displayName,
+      avatar: actor.avatar,
+      description: actor.description,
+    }));
+  } catch (e) {
+    console.error('Error searching actors:', e);
+    return [];
+  }
+};
+
 export const resolveHandle = async (handle: string) => {
   if (handle.startsWith('did:')) return handle;
   const res = await agent.resolveHandle({ handle });
@@ -63,7 +89,9 @@ export const getMergedTimeline = async (handle: string, cursorMap?: Map<string, 
   const did = await resolveHandle(handle);
   // Get follows (limit to 30 for performance and rate limiting)
   const res = await agent.app.bsky.graph.getFollows({ actor: did, limit: 30 });
-  const follows = res.data.follows;
+  const follows = res.data.follows.filter(profile =>
+	profile.labels == null || !profile.labels.some(label => label.val === "!no-unauthenticated")
+  );
   
   const newCursorMap = new Map<string, string>();
   const batchSize = 5;

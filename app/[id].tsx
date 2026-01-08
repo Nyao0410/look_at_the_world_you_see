@@ -62,9 +62,9 @@ const RichText = ({ text, facets }: { text: string; facets?: any[] }) => {
 };
 
 export default function TimelinePage() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams() as { id: string };
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,7 +100,7 @@ export default function TimelinePage() {
       const result = await getMergedTimeline(handleToFetch, currentCursorMap);
       
       if (isLoadMore) {
-        setPosts(prev => [...prev, ...result.posts]);
+        setPosts((prev: Post[]) => [...prev, ...result.posts]);
       } else {
         setPosts(result.posts);
       }
@@ -196,12 +196,19 @@ export default function TimelinePage() {
           onPress={() => router.canGoBack() ? router.back() : router.replace('/')} 
           style={styles.backButton}
         >
-          <Text style={styles.backButtonText}>←</Text>
+          <Text style={styles.backButtonText}>← {t('timeline.back')}</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1}>
           {t('timeline.title', { handle: id })}
         </Text>
-        <View style={{ width: 40 }} />
+        <TouchableOpacity 
+          style={styles.languageToggle}
+          onPress={() => i18n.changeLanguage(i18n.language === 'ja' ? 'en' : 'ja')}
+        >
+          <Text style={styles.languageToggleText}>
+            {i18n.language === 'ja' ? 'EN' : '日本語'}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -214,7 +221,7 @@ export default function TimelinePage() {
       ) : (
         <FlatList
           data={posts}
-          keyExtractor={(item, index) => item.uri + item.indexedAt + index}
+          keyExtractor={(item: Post, index: number) => item.uri + item.indexedAt + index}
           renderItem={renderPost}
           contentContainerStyle={styles.listContent}
           refreshing={refreshing}
@@ -267,8 +274,19 @@ const styles = StyleSheet.create({
     color: '#0085ff',
     fontWeight: 'bold',
   },
-  title: {
-    flex: 1,
+  languageToggle: {
+    padding: 8,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    width: 60,
+    alignItems: 'center',
+  },
+  languageToggleText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0085ff',
+  },
+  title: {    flex: 1,
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
