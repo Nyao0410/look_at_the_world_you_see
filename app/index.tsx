@@ -11,10 +11,12 @@ import {
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { useTranslation } from 'react-i18next';
 
 export default function Home() {
   const [handle, setHandle] = useState('');
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handleSearch = () => {
     if (handle.trim()) {
@@ -31,20 +33,20 @@ export default function Home() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.content}
       >
-        <Text style={styles.title}>Look at the world you see</Text>
-        <Text style={styles.subtitle}>BlueskyのIDを入力して、その人が見ている世界を覗いてみましょう</Text>
+        <Text style={styles.title}>{t('home.title')}</Text>
+        <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
         
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            placeholder="jay.bsky.social"
+            placeholder={t('home.placeholder')}
             value={handle}
             onChangeText={setHandle}
             autoCapitalize="none"
             onSubmitEditing={handleSearch}
           />
           <TouchableOpacity style={styles.button} onPress={handleSearch}>
-            <Text style={styles.buttonText}>見る</Text>
+            <Text style={styles.buttonText}>{t('home.button')}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

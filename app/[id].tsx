@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getMergedTimeline, Post } from '../src/services/bsky';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -63,6 +64,7 @@ const RichText = ({ text, facets }: { text: string; facets?: any[] }) => {
 export default function TimelinePage() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t } = useTranslation();
   
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,7 +107,7 @@ export default function TimelinePage() {
       setCursorMap(result.cursorMap);
     } catch (e: any) {
       console.error(e);
-      setError('タイムラインの取得に失敗しました。IDを確認してください。');
+      setError(t('timeline.error'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -164,7 +166,7 @@ export default function TimelinePage() {
       {item.repostedBy && (
         <View style={styles.repostHeader}>
           <Text style={styles.repostText}>
-            {item.repostedBy.displayName || item.repostedBy.handle} がリポストしました
+            {item.repostedBy.displayName || item.repostedBy.handle} {t('timeline.reposted')}
           </Text>
         </View>
       )}
@@ -197,7 +199,7 @@ export default function TimelinePage() {
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1}>
-          @{id} が見ている世界
+          {t('timeline.title', { handle: id })}
         </Text>
         <View style={{ width: 40 }} />
       </View>
@@ -207,7 +209,7 @@ export default function TimelinePage() {
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0085ff" />
-          <Text style={styles.loadingText}>フォロー一覧から投稿を集計中...</Text>
+          <Text style={styles.loadingText}>{t('timeline.loading')}</Text>
         </View>
       ) : (
         <FlatList
@@ -232,7 +234,7 @@ export default function TimelinePage() {
           }
           ListEmptyComponent={
             !loading && posts.length === 0 ? (
-              <Text style={styles.emptyText}>投稿が見つかりませんでした</Text>
+              <Text style={styles.emptyText}>{t('timeline.empty')}</Text>
             ) : null
           }
         />
