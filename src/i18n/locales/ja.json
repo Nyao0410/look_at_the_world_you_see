@@ -3,13 +3,15 @@
     "title": "Look at the world you see",
     "subtitle": "BlueskyのIDを入力して、その人が見ている世界を覗いてみましょう",
     "placeholder": "jay.bsky.social",
-    "button": "見る"
+    "button": "見る",
+    "noSuggestions": "ユーザーが見つかりませんでした"
   },
   "timeline": {
     "title": "@{{handle}} が見ている世界",
     "loading": "フォロー一覧から投稿を集計中...",
     "error": "タイムラインの取得に失敗しました。IDを確認してください。",
     "empty": "投稿が見つかりませんでした",
-    "reposted": "がリポストしました"
+    "reposted": "がリポストしました",
+    "back": "戻る"
   }
 }

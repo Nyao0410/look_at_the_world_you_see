@@ -3,13 +3,15 @@
     "title": "Look at the world you see",
     "subtitle": "Enter a Bluesky ID to take a peek at the world they're seeing",
     "placeholder": "jay.bsky.social",
-    "button": "View"
+    "button": "View",
+    "noSuggestions": "No users found"
   },
   "timeline": {
     "title": "The world @{{handle}} is seeing",
     "loading": "Gathering posts from the following list...",
     "error": "Failed to retrieve timeline. Please check the ID.",
     "empty": "No posts found",
-    "reposted": "reposted"
+    "reposted": "reposted",
+    "back": "Back"
   }
 }
